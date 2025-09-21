@@ -11,14 +11,14 @@ Repositori ini menyajikan analisis komprehensif terhadap data yang hilang (*miss
 
 ## ✨ Fitur Utama
 
-- **🎯 Diagnosis Komprehensif**: Menganalisis pola data yang hilang, persentase, dan distribusinya menggunakan visualisasi dari pustaka `VIM` dan `visdat`.
-- **🛠️ Implementasi Tiga Metode Imputasi**: Menerapkan tiga strategi imputasi yang berbeda:
-    1. **Simple Imputation**: Mengisi nilai yang hilang dengan statistik dasar seperti rata-rata, median, atau modus.
-    2. **KNN Imputation**: Menggunakan algoritma k-Nearest Neighbors untuk mengisi nilai berdasarkan kemiripan dengan tetangga terdekat.
-    3. **MICE Imputation**: Melakukan imputasi iteratif dengan membangun model regresi untuk memprediksi nilai yang hilang, menghasilkan estimasi yang lebih robust.
-- **🔄 Otomatisasi & Robustness**: Dilengkapi dengan skrip R untuk secara otomatis memeriksa dan menginstal pustaka yang dibutuhkan jika belum terpasang.
-- **📊 Laporan Reproducibel**: Menyajikan file R Markdown (`.Rmd`) yang menghasilkan laporan analisis lengkap, dari pemuatan data hingga perbandingan model.
-- **🔍 Analisis Komparatif Mendalam**: Membandingkan hasil dari setiap metode imputasi melalui DataFrame perbandingan yang terstruktur, memudahkan evaluasi langsung terhadap kualitas imputasi.
+- **🎯 Diagnosis Komprehensif**: Menganalisis pola data yang hilang, persentase, dan distribusinya secara mendalam menggunakan visualisasi dari pustaka `VIM` dan `visdat`.
+- **🛠️ Implementasi Tiga Metode Imputasi**: Menerapkan tiga strategi imputasi yang berbeda secara efektif untuk menangani data yang hilang.
+    - **Simple Imputation**: Mengisi nilai yang hilang dengan statistik dasar seperti **rata-rata**, **median**, atau **modus**.
+    - **KNN Imputation**: Menggunakan algoritma **K-Nearest Neighbors** untuk mengisi nilai berdasarkan kemiripan dengan tetangga terdekat, mempertahankan struktur data.
+    - **MICE Imputation**: Melakukan **imputasi iteratif** dengan membangun model regresi untuk memprediksi nilai yang hilang, menghasilkan estimasi yang lebih kuat dan andal.
+- **⚙️ Otomatisasi & Robustness**: Dilengkapi dengan skrip R yang **otomatis memeriksa dan menginstal pustaka** yang dibutuhkan, memastikan alur kerja dapat berjalan dengan lancar tanpa hambatan teknis.
+- **📊 Laporan Reproducible**: Menyajikan file R Markdown (`.Rmd`) yang **menghasilkan laporan analisis lengkap** yang dapat dibagikan dan direproduksi dengan mudah.
+- **🔍 Analisis Komparatif Mendalam**: Menyediakan perbandingan hasil dari setiap metode imputasi melalui **DataFrame perbandingan yang terstruktur**, memungkinkan evaluasi langsung dan jelas terhadap kualitas imputasi.
 
 ---
 
@@ -51,11 +51,11 @@ Repositori ini menyajikan analisis komprehensif terhadap data yang hilang (*miss
 
 Berikut adalah ringkasan hasil dari setiap metode imputasi yang diimplementasikan:
 
-| Metode Imputasi      | Missing Values Sebelum | Missing Values Sesudah | Status           |
+| Metode Imputasi      | Missing Values Sebelum | Missing Values Sesudah | Status           |
 |----------------------|------------------------|------------------------|------------------|
-| **Simple Imputation**| 866                    | 0                      | ✅ Complete      |
-| **KNN Imputation** | 866                    | 0                      | ✅ Complete      |
-| **MICE Imputation** | 866                    | 0                      | ✅ Complete      |
+| **Simple Imputation**| 866                    | 0                      | ✅ Complete      |
+| **KNN Imputation** | 866                    | 0                      | ✅ Complete      |
+| **MICE Imputation** | 866                    | 0                      | ✅ Complete      |
 
 **Catatan**: Semua metode berhasil mengisi 100% data yang hilang, menunjukkan keberhasilan implementasi.
 
