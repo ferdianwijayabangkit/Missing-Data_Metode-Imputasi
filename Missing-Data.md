@@ -1,17 +1,30 @@
----
-title: "Analisis Missing Data pada Dataset Titanic"
-subtitle: "Implementasi Tiga Metode Imputasi: Simple, KNN, dan MICE Algorithm"
-author: 
-  - name: "Ferdian Bangkit Wijaya"
-    affiliation: "Universitas Sultan Ageng Tirtayasa"
-    email: "ferdian.bangkit@untirta.ac.id"
-date: "`r format(Sys.Date(), '%B %d, %Y')`"
-output:
-  github_document:
-    toc: true
----
+Analisis Missing Data pada Dataset Titanic
+================
+true
+September 21, 2025
 
-```{r setup}
+- [Tujuan Analisis](#tujuan-analisis)
+  - [Metode Imputasi yang
+    Diimplementasikan:](#metode-imputasi-yang-diimplementasikan)
+- [Setup Libraries dan Dependencies](#setup-libraries-dan-dependencies)
+- [Load Dataset Titanic Built-in R](#load-dataset-titanic-built-in-r)
+- [Analisis Missing Data
+  Komprehensif](#analisis-missing-data-komprehensif)
+- [Visualisasi Missing Data](#visualisasi-missing-data)
+- [Persiapan Data untuk Imputasi](#persiapan-data-untuk-imputasi)
+- [Metode 1: Simple Imputation](#metode-1-simple-imputation)
+- [Metode 2: KNN Imputation](#metode-2-knn-imputation)
+- [Metode 3: MICE Imputation](#metode-3-mice-imputation)
+- [DataFrame Hasil Akhir - Perbandingan Semua
+  Metode](#dataframe-hasil-akhir---perbandingan-semua-metode)
+  - [Penjelasan DataFrame
+    Perbandingan:](#penjelasan-dataframe-perbandingan)
+- [Kesimpulan](#kesimpulan)
+  - [Apa yang telah kita lakukan:](#apa-yang-telah-kita-lakukan)
+  - [Hasil Utama:](#hasil-utama)
+  - [Next Steps:](#next-steps)
+
+``` r
 knitr::opts_chunk$set(
   echo = TRUE,
   warning = FALSE,
@@ -23,17 +36,20 @@ knitr::opts_chunk$set(
 
 # Tujuan Analisis
 
-R Markdown ini akan melakukan analisis komprehensif terhadap missing data pada dataset Titanic dan mengimplementasikan tiga metode imputasi yang berbeda.
+R Markdown ini akan melakukan analisis komprehensif terhadap missing
+data pada dataset Titanic dan mengimplementasikan tiga metode imputasi
+yang berbeda.
 
 ## Metode Imputasi yang Diimplementasikan:
 
-1. Simple Imputation - Mean, Median, Mode
-2. K-Nearest Neighbors (KNN) - Imputasi berbasis similarity optimal  
-3. MICE (Multiple Imputation by Chained Equations) - Multi-strategy imputation
+1.  Simple Imputation - Mean, Median, Mode
+2.  K-Nearest Neighbors (KNN) - Imputasi berbasis similarity optimal  
+3.  MICE (Multiple Imputation by Chained Equations) - Multi-strategy
+    imputation
 
 # Setup Libraries dan Dependencies
 
-```{r install-packages}
+``` r
 # Fungsi untuk auto-install package jika belum terinstal
 install_if_missing <- function(packages) {
   new_packages <- packages[!(packages %in% installed.packages()[,"Package"])]
@@ -62,7 +78,13 @@ required_packages <- c(
 )
 
 install_if_missing(required_packages)
+```
 
+    ## Menginstal packages yang belum terinstal: Hmisc, naniar 
+    ## ✗ Gagal menginstal Hmisc : trying to use CRAN without setting a mirror 
+    ## ✗ Gagal menginstal naniar : trying to use CRAN without setting a mirror
+
+``` r
 # Load libraries
 library_loader <- function(lib_name) {
   tryCatch({
@@ -76,9 +98,66 @@ library_loader <- function(lib_name) {
 sapply(required_packages, library_loader)
 ```
 
+    ## ✓ dplyr berhasil dimuat
+    ## ✓ tidyr berhasil dimuat
+
+    ## ✓ ggplot2 berhasil dimuat
+
+    ## ✓ VIM berhasil dimuat
+
+    ## ✓ mice berhasil dimuat
+
+    ## ✓ gridExtra berhasil dimuat
+
+    ## ✓ knitr berhasil dimuat
+
+    ## ✓ DT berhasil dimuat
+
+    ## ✓ plotly berhasil dimuat
+    ## ✗ Gagal memuat Hmisc : there is no package called 'Hmisc' 
+    ## ✗ Gagal memuat naniar : there is no package called 'naniar'
+
+    ## ✓ visdat berhasil dimuat
+
+    ## $dplyr
+    ## NULL
+    ## 
+    ## $tidyr
+    ## NULL
+    ## 
+    ## $ggplot2
+    ## NULL
+    ## 
+    ## $VIM
+    ## NULL
+    ## 
+    ## $mice
+    ## NULL
+    ## 
+    ## $gridExtra
+    ## NULL
+    ## 
+    ## $knitr
+    ## NULL
+    ## 
+    ## $DT
+    ## NULL
+    ## 
+    ## $plotly
+    ## NULL
+    ## 
+    ## $Hmisc
+    ## NULL
+    ## 
+    ## $naniar
+    ## NULL
+    ## 
+    ## $visdat
+    ## NULL
+
 # Load Dataset Titanic Built-in R
 
-```{r load-data}
+``` r
 # Gunakan dataset Titanic built-in R dan konversi ke format yang sesuai
 data("Titanic")
 
@@ -116,20 +195,60 @@ titanic$Embarked <- as.factor(titanic$Embarked)
 
 # Informasi dasar dataset
 cat("Dimensi dataset:", paste(dim(titanic), collapse = " x "), "\n")
+```
+
+    ## Dimensi dataset: 2201 x 7
+
+``` r
 cat("Jumlah baris:", nrow(titanic), "\n")
+```
+
+    ## Jumlah baris: 2201
+
+``` r
 cat("Jumlah kolom:", ncol(titanic), "\n")
+```
 
+    ## Jumlah kolom: 7
+
+``` r
 str(titanic)
+```
 
+    ## 'data.frame':    2201 obs. of  7 variables:
+    ##  $ Class    : Factor w/ 4 levels "1st","2nd","3rd",..: 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ Sex      : Factor w/ 2 levels "Male","Female": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ Age      : num  46 NA 34 38 35 NA 48 29 NA 29 ...
+    ##  $ Survived : Factor w/ 2 levels "No","Yes": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ Fare     : num  48.7 14.8 24.7 NA 23.8 ...
+    ##  $ Embarked : Factor w/ 3 levels "Cherbourg","Queenstown",..: 3 3 3 3 2 3 3 1 NA 1 ...
+    ##  $ Age_Group: Factor w/ 67 levels "0","1","2","3",..: 47 NA 35 39 36 NA 49 30 NA 30 ...
+
+``` r
 # Tampilkan preview
 knitr::kable(head(titanic, 10), 
              caption = "Preview Dataset Titanic Built-in R",
              format = "markdown")
 ```
 
+| Class | Sex  | Age | Survived |  Fare | Embarked    | Age_Group |
+|:------|:-----|----:|:---------|------:|:------------|:----------|
+| 3rd   | Male |  46 | No       | 48.73 | Southampton | 46        |
+| 3rd   | Male |  NA | No       | 14.77 | Southampton | NA        |
+| 3rd   | Male |  34 | No       | 24.71 | Southampton | 34        |
+| 3rd   | Male |  38 | No       |    NA | Southampton | 38        |
+| 3rd   | Male |  35 | No       | 23.76 | Queenstown  | 35        |
+| 3rd   | Male |  NA | No       | 15.32 | Southampton | NA        |
+| 3rd   | Male |  48 | No       | 25.48 | Southampton | 48        |
+| 3rd   | Male |  29 | No       | 19.56 | Cherbourg   | 29        |
+| 3rd   | Male |  NA | No       |  8.29 | NA          | NA        |
+| 3rd   | Male |  29 | No       |  5.39 | Cherbourg   | 29        |
+
+Preview Dataset Titanic Built-in R
+
 # Analisis Missing Data Komprehensif
 
-```{r missing-analysis}
+``` r
 # Fungsi untuk analisis missing data yang detail
 analyze_missing_data <- function(df) {
   # Hitung missing values per kolom
@@ -158,7 +277,11 @@ analyze_missing_data <- function(df) {
 missing_analysis <- analyze_missing_data(titanic)
 
 cat("MISSING DATA PER KOLOM:\n")
+```
 
+    ## MISSING DATA PER KOLOM:
+
+``` r
 if (nrow(missing_analysis) > 0) {
   for (i in seq_len(nrow(missing_analysis))) {
     row <- missing_analysis[i, ]
@@ -168,33 +291,73 @@ if (nrow(missing_analysis) > 0) {
 } else {
   cat("Tidak ada missing data!\n")
 }
+```
 
+    ## • Age          : 330 missing ( 15.0%)
+    ## • Age_Group    : 330 missing ( 15.0%)
+    ## • Fare         : 176 missing (  8.0%)
+    ## • Embarked     : 110 missing (  5.0%)
+
+``` r
 total_missing <- sum(is.na(titanic))
 total_cells <- nrow(titanic) * ncol(titanic)
 cat(sprintf("\nTOTAL MISSING VALUES: %d\n", total_missing))
-cat(sprintf("PERSENTASE TOTAL MISSING: %.2f%%\n", (total_missing / total_cells) * 100))
+```
 
+    ## 
+    ## TOTAL MISSING VALUES: 946
+
+``` r
+cat(sprintf("PERSENTASE TOTAL MISSING: %.2f%%\n", (total_missing / total_cells) * 100))
+```
+
+    ## PERSENTASE TOTAL MISSING: 6.14%
+
+``` r
 # Tampilkan tabel interaktif
 knitr::kable(missing_analysis, 
              caption = "Analisis Missing Data per Kolom",
              format = "markdown")
 ```
 
-```{r missing-per-row}
+| Kolom     | Missing_Count | Missing_Percentage | Data_Type |
+|:----------|--------------:|-------------------:|:----------|
+| Age       |           330 |              14.99 | numeric   |
+| Age_Group |           330 |              14.99 | factor    |
+| Fare      |           176 |               8.00 | numeric   |
+| Embarked  |           110 |               5.00 | factor    |
+
+Analisis Missing Data per Kolom
+
+``` r
 # Analisis missing data per baris
 rows_with_missing <- sum(apply(titanic, 1, function(x) any(is.na(x))))
 total_rows <- nrow(titanic)
 percentage_rows_missing <- round((rows_with_missing / total_rows) * 100, 2)
 
 cat(sprintf("Baris dengan missing data: %d dari %d baris\n", rows_with_missing, total_rows))
-cat(sprintf("Persentase baris dengan missing data: %.2f%%\n", percentage_rows_missing))
+```
 
+    ## Baris dengan missing data: 566 dari 2201 baris
+
+``` r
+cat(sprintf("Persentase baris dengan missing data: %.2f%%\n", percentage_rows_missing))
+```
+
+    ## Persentase baris dengan missing data: 25.72%
+
+``` r
 # Distribusi jumlah missing values per baris
 missing_per_row <- apply(titanic, 1, function(x) sum(is.na(x)))
 missing_distribution <- table(missing_per_row)
 
 cat("\nDISTRIBUSI MISSING VALUES PER BARIS:\n")
+```
 
+    ## 
+    ## DISTRIBUSI MISSING VALUES PER BARIS:
+
+``` r
 for (i in seq_len(length(missing_distribution))) {
   missing_count <- as.numeric(names(missing_distribution)[i])
   row_count <- missing_distribution[i]
@@ -204,7 +367,13 @@ for (i in seq_len(length(missing_distribution))) {
                 missing_count, row_count, percentage))
   }
 }
+```
 
+    ## • 1 missing value(s): 228 baris (10.4%)
+    ## • 2 missing value(s): 296 baris (13.4%)
+    ## • 3 missing value(s): 42 baris (1.9%)
+
+``` r
 # Tampilkan contoh baris dengan missing data
 rows_with_missing_data <- titanic[apply(titanic, 1, function(x) any(is.na(x))), ]
 knitr::kable(head(rows_with_missing_data, 10), 
@@ -212,9 +381,24 @@ knitr::kable(head(rows_with_missing_data, 10),
              format = "markdown")
 ```
 
+|     | Class | Sex    | Age | Survived |  Fare | Embarked    | Age_Group |
+|:----|:------|:-------|----:|:---------|------:|:------------|:----------|
+| 2   | 3rd   | Male   |  NA | No       | 14.77 | Southampton | NA        |
+| 4   | 3rd   | Male   |  38 | No       |    NA | Southampton | 38        |
+| 6   | 3rd   | Male   |  NA | No       | 15.32 | Southampton | NA        |
+| 9   | 3rd   | Male   |  NA | No       |  8.29 | NA          | NA        |
+| 14  | 3rd   | Male   |  27 | No       |    NA | Queenstown  | 27        |
+| 18  | 3rd   | Male   |   2 | No       |    NA | Southampton | 2         |
+| 25  | 3rd   | Male   |  53 | No       |    NA | Southampton | 53        |
+| 30  | 3rd   | Male   |  NA | No       | 43.01 | Southampton | NA        |
+| 35  | 3rd   | Male   |  36 | No       |    NA | Cherbourg   | 36        |
+| 36  | 3rd   | Female |  NA | No       | 10.75 | Southampton | NA        |
+
+Contoh Baris dengan Missing Data
+
 # Visualisasi Missing Data
 
-```{r visualization}
+``` r
 # Bar chart missing data per kolom
 missing_counts_plot <- sapply(titanic, function(x) sum(is.na(x)))
 missing_counts_plot <- missing_counts_plot[missing_counts_plot > 0]
@@ -236,12 +420,31 @@ if (length(missing_counts_plot) > 0) {
   
   print(p1)
 }
+```
 
+![](Missing-Data_files/figure-gfm/visualization-1.png)<!-- -->
+
+``` r
 # Missing data pattern dengan VIM
 VIM::aggr(titanic, col = c('lightblue', 'red'), 
           numbers = TRUE, sortVars = TRUE,
           main = "Pattern Missing Data")
+```
 
+![](Missing-Data_files/figure-gfm/visualization-2.png)<!-- -->
+
+    ## 
+    ##  Variables sorted by number of missings: 
+    ##   Variable      Count
+    ##        Age 0.14993185
+    ##  Age_Group 0.14993185
+    ##       Fare 0.07996365
+    ##   Embarked 0.04997728
+    ##      Class 0.00000000
+    ##        Sex 0.00000000
+    ##   Survived 0.00000000
+
+``` r
 # Missing data heatmap dengan visdat
 p4 <- visdat::vis_miss(titanic) +
   labs(title = "Visualisasi Missing Data Pattern") +
@@ -250,9 +453,11 @@ p4 <- visdat::vis_miss(titanic) +
 print(p4)
 ```
 
+![](Missing-Data_files/figure-gfm/visualization-3.png)<!-- -->
+
 # Persiapan Data untuk Imputasi
 
-```{r preparation}
+``` r
 # Buat copy dari data original untuk masing-masing metode
 titanic_original <- titanic
 titanic_simple <- titanic
@@ -264,11 +469,25 @@ numeric_cols <- names(titanic)[sapply(titanic, is.numeric)]
 categorical_cols <- names(titanic)[sapply(titanic, is.factor) | sapply(titanic, is.character)]
 
 cat("Kolom Numerik:", paste(numeric_cols, collapse = ", "), "\n")
-cat("Kolom Kategorikal:", paste(categorical_cols, collapse = ", "), "\n")
+```
 
+    ## Kolom Numerik: Age, Fare
+
+``` r
+cat("Kolom Kategorikal:", paste(categorical_cols, collapse = ", "), "\n")
+```
+
+    ## Kolom Kategorikal: Class, Sex, Survived, Embarked, Age_Group
+
+``` r
 # Cek missing data per tipe
 cat("\nMISSING DATA PER TIPE KOLOM:\n")
+```
 
+    ## 
+    ## MISSING DATA PER TIPE KOLOM:
+
+``` r
 for (col in names(titanic)) {
   missing_count <- sum(is.na(titanic[[col]]))
   if (missing_count > 0) {
@@ -278,9 +497,14 @@ for (col in names(titanic)) {
 }
 ```
 
+    ## • Age          (    Numerik): 330 missing
+    ## • Fare         (    Numerik): 176 missing
+    ## • Embarked     (Kategorikal): 110 missing
+    ## • Age_Group    (Kategorikal): 330 missing
+
 # Metode 1: Simple Imputation
 
-```{r simple-imputation}
+``` r
 simple_imputation <- function(df) {
   df_imputed <- df
   
@@ -306,25 +530,72 @@ simple_imputation <- function(df) {
 }
 
 cat("Melakukan imputasi sederhana...\n")
-titanic_simple_imputed <- simple_imputation(titanic_simple)
+```
 
+    ## Melakukan imputasi sederhana...
+
+``` r
+titanic_simple_imputed <- simple_imputation(titanic_simple)
+```
+
+    ## ✓ Age: menggunakan mean = 29.73
+    ## ✓ Fare: menggunakan mean = 19.95
+    ## ✓ Embarked: menggunakan mode = 'Southampton'
+    ## ✓ Age_Group: menggunakan mode = '27'
+
+``` r
 # Verifikasi hasil
 missing_before_simple <- sum(is.na(titanic_simple))
 missing_after_simple <- sum(is.na(titanic_simple_imputed))
 
 cat(sprintf("\nHASIL IMPUTASI SEDERHANA:\n"))
-cat(sprintf("   Missing values sebelum: %d\n", missing_before_simple))
-cat(sprintf("   Missing values sesudah: %d\n", missing_after_simple))
-cat(sprintf("   Status: %s\n", ifelse(missing_after_simple == 0, "Berhasil", "Masih ada missing")))
+```
 
+    ## 
+    ## HASIL IMPUTASI SEDERHANA:
+
+``` r
+cat(sprintf("   Missing values sebelum: %d\n", missing_before_simple))
+```
+
+    ##    Missing values sebelum: 946
+
+``` r
+cat(sprintf("   Missing values sesudah: %d\n", missing_after_simple))
+```
+
+    ##    Missing values sesudah: 0
+
+``` r
+cat(sprintf("   Status: %s\n", ifelse(missing_after_simple == 0, "Berhasil", "Masih ada missing")))
+```
+
+    ##    Status: Berhasil
+
+``` r
 knitr::kable(head(titanic_simple_imputed, 10), 
              caption = "Hasil Simple Imputation",
              format = "markdown")
 ```
 
+| Class | Sex  |      Age | Survived |     Fare | Embarked    | Age_Group |
+|:------|:-----|---------:|:---------|---------:|:------------|:----------|
+| 3rd   | Male | 46.00000 | No       | 48.73000 | Southampton | 46        |
+| 3rd   | Male | 29.72956 | No       | 14.77000 | Southampton | 27        |
+| 3rd   | Male | 34.00000 | No       | 24.71000 | Southampton | 34        |
+| 3rd   | Male | 38.00000 | No       | 19.94956 | Southampton | 38        |
+| 3rd   | Male | 35.00000 | No       | 23.76000 | Queenstown  | 35        |
+| 3rd   | Male | 29.72956 | No       | 15.32000 | Southampton | 27        |
+| 3rd   | Male | 48.00000 | No       | 25.48000 | Southampton | 48        |
+| 3rd   | Male | 29.00000 | No       | 19.56000 | Cherbourg   | 29        |
+| 3rd   | Male | 29.72956 | No       |  8.29000 | Southampton | 27        |
+| 3rd   | Male | 29.00000 | No       |  5.39000 | Cherbourg   | 29        |
+
+Hasil Simple Imputation
+
 # Metode 2: KNN Imputation
 
-```{r knn-imputation}
+``` r
 knn_imputation <- function(df, k = 5) {
   cat(sprintf("Melakukan KNN imputation dengan k=%d...\n", k))
   
@@ -366,24 +637,71 @@ knn_imputation <- function(df, k = 5) {
 }
 
 titanic_knn_imputed <- knn_imputation(titanic_knn, k = 5)
+```
 
+    ## Melakukan KNN imputation dengan k=5...
+    ##      Fare  Embarked Age_Group      Fare  Embarked Age_Group 
+    ##      0.18      1.00      1.00    120.92      3.00     67.00 
+    ##       Age  Embarked Age_Group       Age  Embarked Age_Group 
+    ##         0         1         1        73         3        67 
+    ##       Age      Fare Age_Group       Age      Fare Age_Group 
+    ##      0.00      0.18      1.00     73.00    120.92     67.00 
+    ##      Age     Fare Embarked      Age     Fare Embarked 
+    ##     0.00     0.18     1.00    73.00   120.92     3.00
+
+``` r
 # Verifikasi hasil
 missing_before_knn <- sum(is.na(titanic_knn))
 missing_after_knn <- sum(is.na(titanic_knn_imputed))
 
 cat(sprintf("\nHASIL IMPUTASI KNN:\n"))
-cat(sprintf("   Missing values sebelum: %d\n", missing_before_knn))
-cat(sprintf("   Missing values sesudah: %d\n", missing_after_knn))
-cat(sprintf("   Status: %s\n", ifelse(missing_after_knn == 0, "Berhasil", "Masih ada missing")))
+```
 
+    ## 
+    ## HASIL IMPUTASI KNN:
+
+``` r
+cat(sprintf("   Missing values sebelum: %d\n", missing_before_knn))
+```
+
+    ##    Missing values sebelum: 946
+
+``` r
+cat(sprintf("   Missing values sesudah: %d\n", missing_after_knn))
+```
+
+    ##    Missing values sesudah: 0
+
+``` r
+cat(sprintf("   Status: %s\n", ifelse(missing_after_knn == 0, "Berhasil", "Masih ada missing")))
+```
+
+    ##    Status: Berhasil
+
+``` r
 knitr::kable(head(titanic_knn_imputed, 10), 
              caption = "Hasil KNN Imputation",
              format = "markdown")
 ```
 
+| Class | Sex  | Age | Survived |  Fare | Embarked    | Age_Group |
+|:------|:-----|----:|:---------|------:|:------------|:----------|
+| 3rd   | Male |  46 | No       | 48.73 | Southampton | 46        |
+| 3rd   | Male |  57 | No       | 14.77 | Southampton | 54        |
+| 3rd   | Male |  34 | No       | 24.71 | Southampton | 34        |
+| 3rd   | Male |  38 | No       | 23.44 | Southampton | 38        |
+| 3rd   | Male |  35 | No       | 23.76 | Queenstown  | 35        |
+| 3rd   | Male |  57 | No       | 15.32 | Southampton | 57        |
+| 3rd   | Male |  48 | No       | 25.48 | Southampton | 48        |
+| 3rd   | Male |  29 | No       | 19.56 | Cherbourg   | 29        |
+| 3rd   | Male |  45 | No       |  8.29 | Cherbourg   | 44        |
+| 3rd   | Male |  29 | No       |  5.39 | Cherbourg   | 29        |
+
+Hasil KNN Imputation
+
 # Metode 3: MICE Imputation
 
-```{r mice-imputation}
+``` r
 improved_mice_imputation <- function(df, m = 5, max_iter = 15) {
   cat("Mempersiapkan data untuk MICE imputation...\n")
   
@@ -470,43 +788,122 @@ improved_mice_imputation <- function(df, m = 5, max_iter = 15) {
 }
 
 titanic_mice_imputed <- improved_mice_imputation(titanic_mice, m = 5, max_iter = 15)
+```
 
+    ## Mempersiapkan data untuk MICE imputation...
+    ##    Total missing values awal: 946
+    ##    Strategi 1: MICE Standard (max_iter=15, m=5)...
+
+    ##    Missing values setelah MICE: 330
+    ##    Strategi 2: Simple Imputation Fallback...
+    ##      • Age_Group (categorical): filled with '27'
+    ## 
+    ##    FINAL RESULT:
+    ##    Missing values awal: 946
+    ##    Missing values akhir: 0
+    ##    Status: Berhasil
+
+``` r
 # Verifikasi hasil final
 missing_before_mice <- sum(is.na(titanic_mice))
 missing_after_mice <- sum(is.na(titanic_mice_imputed))
 
 cat(sprintf("\nHASIL AKHIR IMPROVED MICE:\n"))
-cat(sprintf("   Missing values sebelum: %d\n", missing_before_mice))
-cat(sprintf("   Missing values sesudah: %d\n", missing_after_mice))
-cat(sprintf("   Status: %s\n", ifelse(missing_after_mice == 0, "Berhasil", "Masih ada missing")))
+```
 
+    ## 
+    ## HASIL AKHIR IMPROVED MICE:
+
+``` r
+cat(sprintf("   Missing values sebelum: %d\n", missing_before_mice))
+```
+
+    ##    Missing values sebelum: 946
+
+``` r
+cat(sprintf("   Missing values sesudah: %d\n", missing_after_mice))
+```
+
+    ##    Missing values sesudah: 0
+
+``` r
+cat(sprintf("   Status: %s\n", ifelse(missing_after_mice == 0, "Berhasil", "Masih ada missing")))
+```
+
+    ##    Status: Berhasil
+
+``` r
 knitr::kable(head(titanic_mice_imputed, 10), 
              caption = "Hasil MICE Imputation",
              format = "markdown")
 ```
 
+| Class | Sex  | Age | Survived |  Fare | Embarked    | Age_Group |
+|:------|:-----|----:|:---------|------:|:------------|:----------|
+| 3rd   | Male |  46 | No       | 48.73 | Southampton | 46        |
+| 3rd   | Male |  12 | No       | 14.77 | Southampton | 27        |
+| 3rd   | Male |  34 | No       | 24.71 | Southampton | 34        |
+| 3rd   | Male |  38 | No       | 28.99 | Southampton | 38        |
+| 3rd   | Male |  35 | No       | 23.76 | Queenstown  | 35        |
+| 3rd   | Male |  16 | No       | 15.32 | Southampton | 27        |
+| 3rd   | Male |  48 | No       | 25.48 | Southampton | 48        |
+| 3rd   | Male |  29 | No       | 19.56 | Cherbourg   | 29        |
+| 3rd   | Male |  19 | No       |  8.29 | Southampton | 27        |
+| 3rd   | Male |  29 | No       |  5.39 | Cherbourg   | 29        |
+
+Hasil MICE Imputation
+
 # DataFrame Hasil Akhir - Perbandingan Semua Metode
 
-```{r final-comparison}
+``` r
 # Identifikasi baris yang memiliki missing data di dataset original
 missing_mask <- apply(titanic, 1, function(x) any(is.na(x)))
 rows_with_missing <- sum(missing_mask)
 total_rows <- nrow(titanic)
 
 cat(sprintf("Total baris: %d\n", total_rows))
-cat(sprintf("Baris dengan missing data: %d\n", rows_with_missing))
-cat(sprintf("Baris tanpa missing data: %d\n", total_rows - rows_with_missing))
+```
 
+    ## Total baris: 2201
+
+``` r
+cat(sprintf("Baris dengan missing data: %d\n", rows_with_missing))
+```
+
+    ## Baris dengan missing data: 566
+
+``` r
+cat(sprintf("Baris tanpa missing data: %d\n", total_rows - rows_with_missing))
+```
+
+    ## Baris tanpa missing data: 1635
+
+``` r
 # Identifikasi kolom dengan dan tanpa missing values
 columns_with_missing <- names(titanic)[sapply(titanic, function(x) any(is.na(x)))]
 columns_without_missing <- names(titanic)[!sapply(titanic, function(x) any(is.na(x)))]
 
 cat(sprintf("\nKolom dengan missing values: %s\n", paste(columns_with_missing, collapse = ", ")))
-cat(sprintf("Kolom tanpa missing values: %s\n", paste(columns_without_missing, collapse = ", ")))
+```
 
+    ## 
+    ## Kolom dengan missing values: Age, Fare, Embarked, Age_Group
+
+``` r
+cat(sprintf("Kolom tanpa missing values: %s\n", paste(columns_without_missing, collapse = ", ")))
+```
+
+    ## Kolom tanpa missing values: Class, Sex, Survived
+
+``` r
 # Buat DataFrame perbandingan untuk baris dengan missing data
 cat(sprintf("\nMEMBUAT DATAFRAME PERBANDINGAN LENGKAP...\n"))
+```
 
+    ## 
+    ## MEMBUAT DATAFRAME PERBANDINGAN LENGKAP...
+
+``` r
 # Ambil hanya baris yang memiliki missing values
 missing_indices <- which(missing_mask)
 original_data <- titanic[missing_indices, ]
@@ -531,20 +928,70 @@ for (col in columns_with_missing) {
 }
 
 cat(sprintf("✓ DataFrame perbandingan berhasil dibuat!\n"))
-cat(sprintf("Shape: %d x %d\n", nrow(comparison_df), ncol(comparison_df)))
+```
 
+    ## ✓ DataFrame perbandingan berhasil dibuat!
+
+``` r
+cat(sprintf("Shape: %d x %d\n", nrow(comparison_df), ncol(comparison_df)))
+```
+
+    ## Shape: 566 x 19
+
+``` r
 cat(sprintf("\nSTRUKTUR KOLOM DATAFRAME:\n"))
+```
+
+    ## 
+    ## STRUKTUR KOLOM DATAFRAME:
+
+``` r
 cat(sprintf("   Kolom tanpa missing: %s\n", paste(columns_without_missing, collapse = ", ")))
+```
+
+    ##    Kolom tanpa missing: Class, Sex, Survived
+
+``` r
 cat(sprintf("   Kolom dengan missing (format: KOLOM_Original, KOLOM_Simple, KOLOM_KNN, KOLOM_MICE):\n"))
+```
+
+    ##    Kolom dengan missing (format: KOLOM_Original, KOLOM_Simple, KOLOM_KNN, KOLOM_MICE):
+
+``` r
 for (col in columns_with_missing) {
   cat(sprintf("      • %s: Original → Simple → KNN → MICE\n", toupper(col)))
 }
+```
 
+    ##       • AGE: Original → Simple → KNN → MICE
+    ##       • FARE: Original → Simple → KNN → MICE
+    ##       • EMBARKED: Original → Simple → KNN → MICE
+    ##       • AGE_GROUP: Original → Simple → KNN → MICE
+
+``` r
 # Tampilkan subset dari comparison_df untuk markdown (10 baris pertama)
 knitr::kable(head(comparison_df, 10), 
              caption = "Perbandingan Lengkap: Original vs Simple vs KNN vs MICE (10 baris pertama)",
              format = "markdown")
+```
 
+|  | CLASS | SEX | SURVIVED | AGE_Original | AGE_Simple | AGE_KNN | AGE_MICE | FARE_Original | FARE_Simple | FARE_KNN | FARE_MICE | EMBARKED_Original | EMBARKED_Simple | EMBARKED_KNN | EMBARKED_MICE | AGE_GROUP_Original | AGE_GROUP_Simple | AGE_GROUP_KNN | AGE_GROUP_MICE |
+|:---|:---|:---|:---|---:|---:|---:|---:|---:|---:|---:|---:|:---|:---|:---|:---|:---|:---|:---|:---|
+| 2 | 3rd | Male | No | NA | 29.72956 | 57 | 12 | 14.77 | 14.77000 | 14.77 | 14.77 | Southampton | Southampton | Southampton | Southampton | NA | 27 | 54 | 27 |
+| 4 | 3rd | Male | No | 38 | 38.00000 | 38 | 38 | NA | 19.94956 | 23.44 | 28.99 | Southampton | Southampton | Southampton | Southampton | 38 | 38 | 38 | 38 |
+| 6 | 3rd | Male | No | NA | 29.72956 | 57 | 16 | 15.32 | 15.32000 | 15.32 | 15.32 | Southampton | Southampton | Southampton | Southampton | NA | 27 | 57 | 27 |
+| 9 | 3rd | Male | No | NA | 29.72956 | 45 | 19 | 8.29 | 8.29000 | 8.29 | 8.29 | NA | Southampton | Cherbourg | Southampton | NA | 27 | 44 | 27 |
+| 14 | 3rd | Male | No | 27 | 27.00000 | 27 | 27 | NA | 19.94956 | 20.40 | 60.10 | Queenstown | Queenstown | Queenstown | Queenstown | 27 | 27 | 27 | 27 |
+| 18 | 3rd | Male | No | 2 | 2.00000 | 2 | 2 | NA | 19.94956 | 16.93 | 10.08 | Southampton | Southampton | Southampton | Southampton | 2 | 2 | 2 | 2 |
+| 25 | 3rd | Male | No | 53 | 53.00000 | 53 | 53 | NA | 19.94956 | 13.86 | 10.53 | Southampton | Southampton | Southampton | Southampton | 53 | 53 | 53 | 53 |
+| 30 | 3rd | Male | No | NA | 29.72956 | 55 | 41 | 43.01 | 43.01000 | 43.01 | 43.01 | Southampton | Southampton | Southampton | Southampton | NA | 27 | 53 | 27 |
+| 35 | 3rd | Male | No | 36 | 36.00000 | 36 | 36 | NA | 19.94956 | 6.52 | 42.80 | Cherbourg | Cherbourg | Cherbourg | Cherbourg | 36 | 36 | 36 | 36 |
+| 36 | 3rd | Female | No | NA | 29.72956 | 43 | 52 | 10.75 | 10.75000 | 10.75 | 10.75 | Southampton | Southampton | Southampton | Southampton | NA | 27 | 42 | 27 |
+
+Perbandingan Lengkap: Original vs Simple vs KNN vs MICE (10 baris
+pertama)
+
+``` r
 # Summary table
 summary_results <- data.frame(
   Metode = c("Original", "Simple", "KNN", "MICE"),
@@ -574,50 +1021,66 @@ knitr::kable(summary_results,
              format = "markdown")
 ```
 
+| Metode   | Missing_Values | Total_Rows | Status     |
+|:---------|---------------:|-----------:|:-----------|
+| Original |            946 |       2201 | Incomplete |
+| Simple   |              0 |       2201 | Complete   |
+| KNN      |              0 |       2201 | Complete   |
+| MICE     |              0 |       2201 | Complete   |
+
+Ringkasan Perbandingan Metode Imputasi
+
 ## Penjelasan DataFrame Perbandingan:
 
-- **Kolom tanpa missing values**: Ditampilkan apa adanya dari data original
-- **Kolom dengan missing values**: Disusun dalam format `KOLOM_Original → KOLOM_Simple → KOLOM_KNN → KOLOM_MICE`
-- **Format berdampingan**: Memudahkan perbandingan langsung antar metode untuk setiap kolom
-- **Contoh**: AGE_Original, AGE_Simple, AGE_KNN, AGE_MICE ditampilkan bersebelahan
+- **Kolom tanpa missing values**: Ditampilkan apa adanya dari data
+  original
+- **Kolom dengan missing values**: Disusun dalam format
+  `KOLOM_Original → KOLOM_Simple → KOLOM_KNN → KOLOM_MICE`
+- **Format berdampingan**: Memudahkan perbandingan langsung antar metode
+  untuk setiap kolom
+- **Contoh**: AGE_Original, AGE_Simple, AGE_KNN, AGE_MICE ditampilkan
+  bersebelahan
 
 # Kesimpulan
 
 ## Apa yang telah kita lakukan:
 
-1. Analisis Missing Data Komprehensif
-   - Identifikasi kolom dan baris dengan missing data
-   - Analisis pola dan distribusi missing values  
-   - Visualisasi menggunakan heatmap dan grafik
-
-2. Implementasi Tiga Metode Imputasi
-   - Simple Imputation: Mean/Median untuk numerik, Mode untuk kategorikal
-   - KNN Imputation: Berdasarkan similarity dengan k-nearest neighbors
-   - MICE Imputation: Multiple imputation dengan chained equations
-
-3. Evaluasi dan Perbandingan
-   - Analisis efektivitas setiap metode
-   - Perbandingan distribusi data sebelum dan sesudah imputasi
-   - DataFrame perbandingan dengan format yang mudah dianalisis
+1.  Analisis Missing Data Komprehensif
+    - Identifikasi kolom dan baris dengan missing data
+    - Analisis pola dan distribusi missing values  
+    - Visualisasi menggunakan heatmap dan grafik
+2.  Implementasi Tiga Metode Imputasi
+    - Simple Imputation: Mean/Median untuk numerik, Mode untuk
+      kategorikal
+    - KNN Imputation: Berdasarkan similarity dengan k-nearest neighbors
+    - MICE Imputation: Multiple imputation dengan chained equations
+3.  Evaluasi dan Perbandingan
+    - Analisis efektivitas setiap metode
+    - Perbandingan distribusi data sebelum dan sesudah imputasi
+    - DataFrame perbandingan dengan format yang mudah dianalisis
 
 ## Hasil Utama:
+
 - Semua metode berhasil mengatasi missing values
 - Analisis detail pola missing data pada dataset Titanic built-in R
 - Implementasi yang robust dengan error handling
 - Format perbandingan yang user-friendly dengan kolom berdampingan
 
 ## Next Steps:
+
 - Eksperimen dengan parameter yang berbeda
 - Implementasi pada dataset lain
 - Evaluasi impact terhadap model machine learning
 
----
+------------------------------------------------------------------------
 
 Author: Ferdian Bangkit Wijaya  
 Afiliasi: Universitas Sultan Ageng Tirtayasa  
-Contact: ferdian.bangkit@untirta.ac.id  
-Last Updated: `r format(Sys.Date(), '%B %d, %Y')`
+Contact: <ferdian.bangkit@untirta.ac.id>  
+Last Updated: September 21, 2025
 
----
+------------------------------------------------------------------------
 
-Note: R Markdown ini menggunakan dataset Titanic built-in R yang telah dimodifikasi untuk menciptakan missing values yang realistis untuk keperluan demonstrasi metode imputasi.
+Note: R Markdown ini menggunakan dataset Titanic built-in R yang telah
+dimodifikasi untuk menciptakan missing values yang realistis untuk
+keperluan demonstrasi metode imputasi.
