@@ -1,50 +1,49 @@
 # 📊 Analisis Missing Data pada Dataset Titanic
 
-![Python](https://img.shields.io/badge/Python-3.7+-blue.svg)
-![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-orange.svg)
-![Scikit--Learn](https://img.shields.io/badge/scikit--learn-Imputation-red.svg)
+![R](https://img.shields.io/badge/R-4.0+-blue.svg)
+![RStudio](https://img.shields.io/badge/RStudio-RMarkdown-purple.svg)
+![mice](https://img.shields.io/badge/MICE-Imputation-green.svg)
 ![Affiliation](https://img.shields.io/badge/Affiliation-UNTIRTA-orange.svg)
 
-Repositori ini menyajikan analisis komprehensif terhadap data yang hilang (*missing data*) pada dataset Titanic. Analisis ini mencakup diagnosis mendalam dan demonstrasi tiga metode imputasi yang paling umum dan efektif: **Simple Imputation**, **K-Nearest Neighbors (KNN) Imputation**, dan **Multiple Imputation by Chained Equations (MICE)**. Proyek ini memandu Anda melalui alur kerja lengkap, dari visualisasi pola data yang hilang hingga implementasi dan perbandingan hasil dari setiap metode.
+Repositori ini menyajikan analisis komprehensif terhadap data yang hilang (*missing data*) pada dataset Titanic. Proyek ini mendemonstrasikan alur kerja lengkap di **R**, dari diagnosis pola data yang hilang hingga implementasi dan perbandingan tiga metode imputasi yang efektif: **Simple Imputation**, **K-Nearest Neighbors (KNN) Imputation**, dan **Multiple Imputation by Chained Equations (MICE)**.
 
 ---
 
 ## ✨ Fitur Utama
 
-- **🎯 Diagnosis Komprehensif**: Analisis mendalam tentang pola data yang hilang, persentase, dan distribusinya menggunakan tabel ringkasan dan visualisasi khusus dari pustaka `missingno`.
-- **🛠️ Implementasi Tiga Metode Imputasi**: Menerapkan tiga strategi imputasi yang berbeda untuk mengatasi masalah data hilang, yaitu:
-    1. **Simple Imputation**: Mengisi nilai yang hilang dengan statistik dasar seperti rata-rata, median, atau modus.
-    2. **KNN Imputation**: Menggunakan algoritma k-Nearest Neighbors untuk mengisi nilai berdasarkan kemiripan dengan tetangga terdekat.
-    3. **MICE Imputation**: Melakukan imputasi iteratif dengan membangun model regresi untuk memprediksi nilai yang hilang, menghasilkan estimasi yang lebih robust.
-- **🔄 Otomatisasi & Robustness**: Notebook ini dilengkapi dengan fungsi auto-install dependencies yang cerdas dan penanganan kesalahan yang ditingkatkan untuk memastikan alur kerja yang mulus dan dapat direproduksi.
-- **📊 Laporan & Visualisasi Interaktif**: Menyajikan berbagai visualisasi yang jelas, termasuk diagram batang, heatmap, dan boxplot untuk membandingkan distribusi data sebelum dan sesudah imputasi.
-- **🔍 Analisis Komparatif Mendalam**: Membandingkan hasil dari setiap metode imputasi melalui tabel ringkasan dan DataFrame perbandingan yang terstruktur, memungkinkan evaluasi langsung terhadap kualitas imputasi.
+- **🎯 Diagnosis Komprehensif**: Menganalisis pola data yang hilang, persentase, dan distribusinya menggunakan visualisasi dari pustaka `VIM` dan `visdat`.
+- **🛠️ Implementasi Tiga Metode Imputasi**: Menerapkan tiga strategi imputasi yang berbeda:
+    1. **Simple Imputation**: Mengisi nilai yang hilang dengan statistik dasar seperti rata-rata, median, atau modus.
+    2. **KNN Imputation**: Menggunakan algoritma k-Nearest Neighbors untuk mengisi nilai berdasarkan kemiripan dengan tetangga terdekat.
+    3. **MICE Imputation**: Melakukan imputasi iteratif dengan membangun model regresi untuk memprediksi nilai yang hilang, menghasilkan estimasi yang lebih robust.
+- **🔄 Otomatisasi & Robustness**: Dilengkapi dengan skrip R untuk secara otomatis memeriksa dan menginstal pustaka yang dibutuhkan jika belum terpasang.
+- **📊 Laporan Reproducibel**: Menyajikan file R Markdown (`.Rmd`) yang menghasilkan laporan analisis lengkap, dari pemuatan data hingga perbandingan model.
+- **🔍 Analisis Komparatif Mendalam**: Membandingkan hasil dari setiap metode imputasi melalui DataFrame perbandingan yang terstruktur, memudahkan evaluasi langsung terhadap kualitas imputasi.
 
 ---
 
 ## 🔧 Tumpukan Teknologi (Tech Stack)
 
-- **Bahasa**: `Python 3.7+`
-- **Pustaka Python**: `pandas`, `numpy`, `matplotlib`, `seaborn`, `scikit-learn`, `missingno`
-- **Lingkungan**: `Jupyter Notebook / Lab`
+- **Bahasa**: `R 4.0+`
+- **Pustaka R**: `dplyr`, `tidyr`, `ggplot2`, `VIM`, `mice`, `knitr`, `DT`, dan lainnya.
+- **Lingkungan**: `RStudio` / `R Markdown`
 
 ---
 
 ## 🚀 Cara Memulai
 
 ### Prasyarat
-- **Perangkat Lunak**: Python 3.7+, Jupyter Notebook/Lab.
-- **File Data**: Notebook ini menggunakan dataset Titanic yang sudah terintegrasi di dalam pustaka `seaborn`, sehingga tidak memerlukan file data eksternal.
+- **Perangkat Lunak**: R 4.0+ dan RStudio.
 
 ### Instalasi & Penggunaan
 
 1. **Unduh Repositori**: *Clone* atau unduh proyek ini ke komputer Anda.
 
-2. **Jalankan Jupyter Notebook**: Buka terminal atau command prompt, lalu jalankan Jupyter Lab/Notebook dan buka file Python (`.ipynb`).
+2. **Jalankan RStudio**: Buka RStudio dan buka file `Analisis_Missing_Data.Rmd`.
 
-3. **Instalasi Otomatis**: Skrip dalam notebook dirancang untuk secara otomatis memeriksa dan menginstal pustaka yang dibutuhkan jika belum terpasang.
+3. **Instalasi Otomatis**: Skrip dalam R Markdown akan secara otomatis memeriksa dan menginstal semua paket yang diperlukan saat Anda mengeksekusi *chunk* pertama.
 
-4. **Jalankan Analisis**: Eksekusi semua sel secara berurutan untuk mereplikasi seluruh alur kerja, dari analisis data hingga perbandingan hasil imputasi.
+4. **Jalankan Analisis**: Tekan tombol **"Knit"** untuk menjalankan seluruh alur kerja dan menghasilkan laporan dalam format HTML atau PDF, atau jalankan setiap *chunk* kode secara berurutan.
 
 ---
 
@@ -52,13 +51,13 @@ Repositori ini menyajikan analisis komprehensif terhadap data yang hilang (*miss
 
 Berikut adalah ringkasan hasil dari setiap metode imputasi yang diimplementasikan:
 
-| Metode Imputasi      | Missing Values Sebelum | Missing Values Sesudah | Status           |
+| Metode Imputasi      | Missing Values Sebelum | Missing Values Sesudah | Status           |
 |----------------------|------------------------|------------------------|------------------|
-| **Simple Imputation**| 866                    | 0                      | ✅ Complete      |
-| **KNN Imputation** | 866                    | 0                      | ✅ Complete      |
-| **MICE Imputation** | 866                    | 0                      | ✅ Complete      |
+| **Simple Imputation**| 866                    | 0                      | ✅ Complete      |
+| **KNN Imputation** | 866                    | 0                      | ✅ Complete      |
+| **MICE Imputation** | 866                    | 0                      | ✅ Complete      |
 
-**Catatan:** Semua metode berhasil mengisi 100% data yang hilang, namun perbedaan kualitasnya dapat dilihat dari perbandingan distribusi data dan bagaimana setiap metode mempertahankan karakteristik statistik dataset asli.
+**Catatan**: Semua metode berhasil mengisi 100% data yang hilang, menunjukkan keberhasilan implementasi.
 
 ---
 
@@ -78,4 +77,4 @@ Berikut adalah ringkasan hasil dari setiap metode imputasi yang diimplementasika
 
 ---
 
-> Proyek ini dirancang sebagai panduan praktis untuk mengatasi masalah data hilang, menunjukkan bagaimana pendekatan yang terstruktur dapat menghasilkan dataset yang lebih bersih dan siap untuk analisis lanjutan.
+> R Markdown ini menggunakan dataset Titanic built-in R yang telah dimodifikasi untuk menciptakan missing values yang realistis untuk keperluan demonstrasi metode imputasi.
